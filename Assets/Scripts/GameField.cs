@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class GameField : MonoBehaviour
 {
-    GameObject[,] asd = new GameObject[10,8];
     public enum CellState
     {
         Empty, Misdelivered, Occupied, Misplaced, Hit
@@ -13,44 +12,50 @@ public class GameField : MonoBehaviour
 
 
     public GameObject cellPrefab;
-    public float bottomLeftX, bottomLeftY;
+    public Vector2 originBottomLeft;
     static Bounds[,] BoundsOfCells;
-    static int[,] fieldBody = new int[10, 8];
+    static int[,] fieldBody = new int[10, 10];
     static float cellSize;
-    static Vector2 BottomLeftCorner;
+    static Vector2 bottomLeftCellStartCorner;
+
+    GameObject origin;
+    protected string originObjName = "GameFieldOrigin";
+
 
     // Start is called before the first frame update
     void Start()
     {
+        origin = GameObject.Find(originObjName);
+        origin.transform.position = originBottomLeft;
+
         var sprRenderer = cellPrefab.GetComponent<SpriteRenderer>();
         cellSize = sprRenderer.bounds.size.x;
-        BoundsOfCells = new Bounds[Width(), High()];
+        BoundsOfCells = new Bounds[Width(), Height()];
         GenerateField();
     }
 
     void GenerateField()
     {
-        for (int i = 0; i < Width(); i++)
-        {
-            for (int j = 0; j < High(); j++)
-            {
-                var cellPos = new Vector2(bottomLeftX + i * cellSize, bottomLeftY + j * cellSize);
-                asd[i,j] = Instantiate(cellPrefab, cellPos, Quaternion.identity);
-                var CellBounds = new Bounds(cellPos, new Vector2(cellSize, cellSize));
-                BoundsOfCells[i, j] = CellBounds;
-            }
-        }
+        for (int x = 0; x < Width(); x++) GenerateFieldColumn(x);
+        
     }
-     void Update()
+    void GenerateFieldColumn(int x)
     {
-        for (int i = 0; i < Width(); i++)
-        {
-            for (int j = 0; j < High(); j++)
-            {
-                Destroy(asd[i, j]);
-            }
-        }
-        GenerateField();
+        for (int y = 0; y < Height(); y++) OnGenerateCell(x, y);
+        
+    }
+    void OnGenerateCell(int x, int y)
+    {
+        var cellPos = new Vector2(originBottomLeft.x + x * cellSize,
+                originBottomLeft.y + y * cellSize);
+        var cell = Instantiate(cellPrefab, cellPos, Quaternion.identity);
+        cell.transform.SetParent(origin.transform);
+        var CellBounds = new Bounds(cellPos, new Vector2(cellSize, cellSize));
+        BoundsOfCells[x, y] = CellBounds;
+    }
+    void Update()
+    {
+        origin.transform.position = originBottomLeft;
     }
 
     static int Width()
@@ -58,14 +63,14 @@ public class GameField : MonoBehaviour
         return fieldBody.GetLength(0);
     }
 
-    static int High()
+    static int Height()
     {
         return fieldBody.GetLength(1);
     }
     static Vector2 GetCellNormalPos(Vector2 Position)
     {
-        var dx = Position.x - BottomLeftCorner.x;
-        var dy = Position.y - BottomLeftCorner.y;
+        var dx = Position.x - bottomLeftCellStartCorner.x;
+        var dy = Position.y - bottomLeftCellStartCorner.y;
         int x = (int)(dx / cellSize);
         int y = (int)(dy / cellSize);
         return new Vector2(x,y);
@@ -90,7 +95,7 @@ public class GameField : MonoBehaviour
         for (int i = 0; i < Width(); i++)
         {
             string str=" ";
-            for (int j = 0; j <  High(); j++)
+            for (int j = 0; j <  Height(); j++)
             {
                 str+=fieldBody[i, j]+" ";
             }
@@ -106,10 +111,10 @@ public class GameField : MonoBehaviour
     {
         var CellNormalPos = GetCellNormalPos(mousePos);
         var BottomLeftCells = BoundsOfCells[0, 0];
-        var UpperRightCells = BoundsOfCells[Width() - 1, High() - 1];
-        BottomLeftCorner = BottomLeftCells.min;
+        var UpperRightCells = BoundsOfCells[Width() - 1, Height() - 1];
+        bottomLeftCellStartCorner = BottomLeftCells.min;
         var UpperRightCorner = UpperRightCells.max;
-        bool IsOverField = mousePos.x>BottomLeftCorner.x && mousePos.y>BottomLeftCorner.y && mousePos.x<UpperRightCorner.x && mousePos.y<UpperRightCorner.y;
+        bool IsOverField = mousePos.x>bottomLeftCellStartCorner.x && mousePos.y>bottomLeftCellStartCorner.y && mousePos.x<UpperRightCorner.x && mousePos.y<UpperRightCorner.y;
 
         if (!IsOverField)//Кораблик за пределами поля
         {
@@ -147,6 +152,6 @@ public class GameField : MonoBehaviour
     }
     static bool IsPointWithinMatrics(int x, int y)
     {
-        return x>=0&&y>=0&& x < Width() && y <High();
+        return x>=0&&y>=0&& x < Width() && y <Height();
     }
 }

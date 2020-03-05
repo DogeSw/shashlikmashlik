@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Ship : MonoBehaviour
+public class Ship : Dispatcher
 {
     public enum Orientation
     {
@@ -13,7 +13,6 @@ public class Ship : MonoBehaviour
     public Orientation orientation = Orientation.Horizontal;
     public GameObject floorButtonPref;
     Canvas canvas;
-    Dispatcher dispatcher;
     bool toMove = false;
     int floorsNum;
     Animator[] animators;
@@ -25,8 +24,9 @@ public class Ship : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         canvas = GetComponentInParent<Canvas>();
         floorsNum = transform.childCount;
         animators = new Animator[floorsNum];
@@ -46,7 +46,7 @@ public class Ship : MonoBehaviour
             buttonRectTransf.sizeDelta = new Vector2(floorSize, floorSize); // Размер кнопок
             var buttonScript = floorButtonObj.GetComponent<Button>(); // Задавание кликабельности
             buttonScript.onClick.AddListener(OnFloorClick); // Кликабельность и привязываемость.
-            dispatcher = GetComponentInChildren<Dispatcher>();
+            
             var animator = floor.GetComponent<Animator>();
             animators[i] = animator;
         }
@@ -62,7 +62,7 @@ public class Ship : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        toMove = Equals(Dispatcher.currentShip);
+        toMove = Equals(currentShip);
         if (!toMove) return;
         var mousePos = Input.mousePosition; // позиция мыши
         var CanvasRec = canvas.transform as RectTransform;
@@ -85,7 +85,7 @@ public class Ship : MonoBehaviour
             if (WasLocatedOnse)
             {
                 transform.position = LastPosition;
-                Dispatcher.currentShip = null;
+                currentShip = null;
                 if (orientation!=LastOrentation)
                 {
                     Rotate();
@@ -117,7 +117,6 @@ public class Ship : MonoBehaviour
 
     void OnFloorClick()
     {
-        //Debug.Log("KEK");
         if (!Input.GetMouseButtonUp(0))
         {
             return;
@@ -128,7 +127,7 @@ public class Ship : MonoBehaviour
             LastOrentation = orientation;
             GameField.RegisterShip(this);
         }
-        dispatcher.OnShipClick();
+        OnShipClick();
         if (IsPositionCorrect)
         {
             WasLocatedOnse = true;
@@ -139,10 +138,10 @@ public class Ship : MonoBehaviour
     {
         return floorsNum;
     }
+
     public bool WAsLocatedOnse()
     {
         return WasLocatedOnse;
-    }
-    
+    }   
 
 }

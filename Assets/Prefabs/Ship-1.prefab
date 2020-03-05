@@ -110,7 +110,6 @@ GameObject:
   m_Component:
   - component: {fileID: 930807494053279862}
   - component: {fileID: 930807494053279863}
-  - component: {fileID: 24958970613212535}
   - component: {fileID: 4708306248697210944}
   m_Layer: 5
   m_Name: Ship-1
@@ -151,23 +150,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 027c80b92f6ffea40a59cbec3ad12884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shipPrefab: {fileID: 930807494053279861}
   IsPositionCorrect: 0
   orientation: 0
   floorButtonPref: {fileID: 6396866382510916060, guid: d3d626bac4e68ff4da3fd12bca82cdb8,
     type: 3}
---- !u!114 &24958970613212535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 930807494053279861}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e081fc6fea1cabe4c934ff4ff9ba5dcd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shipPrefab: {fileID: 930807494053279861}
+  IsWithIn: 0
+  CellCenterPos: {x: 0, y: 0}
 --- !u!222 &4708306248697210944
 CanvasRenderer:
   m_ObjectHideFlags: 0

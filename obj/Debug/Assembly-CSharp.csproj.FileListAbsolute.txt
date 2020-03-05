@@ -1,2 +1,4 @@
 D:\Visual Studio 2010\Морской бой\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
 D:\Visual Studio 2010\Морской бой\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+D:\Visual Studio 2010\П12\Морской бой\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+D:\Visual Studio 2010\П12\Морской бой\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
